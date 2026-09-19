@@ -1,0 +1,53 @@
+cat > .gitignore << 'EOF'
+# saída de build
+/dist
+/build
+*.tsbuildinfo
+
+# dependências
+/node_modules
+
+# variáveis de ambiente (versione só o exemplo)
+.env
+.env.*
+!.env.example
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# testes
+/coverage
+/.nyc_output
+
+# runtime
+pids
+*.pid
+*.seed
+*.pid.lock
+.temp
+.tmp
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+EOF
