@@ -11,7 +11,7 @@ export class ConsultaService {
     ) { }
 
     async rastrear(dados: { codigo: string }): Promise<string | null> {
-        const id = randomUUID();
+        const id = dados.codigo;
         const resultado = await this.rabbit.publicar('rastrear', { id, ...dados });
         return resultado.ok ? id : null;
     }

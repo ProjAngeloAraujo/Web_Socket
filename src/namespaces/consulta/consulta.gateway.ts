@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { Namespace, Socket } from 'socket.io';
 import { ConsultaService } from "./consulta.service";
+import { EVENTOS_CONSULTA, salaConsulta } from "./consulta.events";
 
 @WebSocketGateway({ namespace: '/consulta' })
 export class ConsultaGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -27,15 +28,16 @@ export class ConsultaGateway implements OnGatewayInit, OnGatewayConnection, OnGa
         if (typeof id !== 'string' || !/^\w+$/.test(id)) return;
 
         try {
-            await client.join(`consulta:${id}`);                     
+            await client.join(salaConsulta(id));
+                    
             const filaId = await this.consultaService.rastrear({ codigo: id.toString() });  
 
             if (!filaId) {
-                client.emit('status', { id, message: 'não há fila disponível' });
+                client.emit('status', { id, status: 'erro', erro: 'não há fila disponível' });
                 return;
             }
 
-            client.emit('status', { id, message: `cliente ${id} adicionado à fila #${filaId}` });
+            client.emit(EVENTOS_CONSULTA.STATUS, { id, status: 'iniciado', message: `cliente ${id} adicionado à fila #${filaId}` });
             this.logger.log(`conectou: ${client.id} (consulta ${id})`);
         } catch (err) {
             this.logger.error(`falha ao iniciar consulta ${id}: ${err instanceof Error ? err.message : err}`);
